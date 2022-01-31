@@ -1,4 +1,6 @@
-data/*
-keyfile/*
-mongostatus/*
-.env
+**/data/*
+**/mongostatus/*
+**/keyfile/*
+.env*
+*.key
+*.flag

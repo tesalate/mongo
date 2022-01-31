@@ -17,9 +17,9 @@ services:
       - MONGO_INITDB_USERNAME=${MONGO_INITDB_USERNAME}
       - MONGO_INITDB_PASSWORD=${MONGO_INITDB_PASSWORD}
     volumes:
-      - $PWD/data/mongo-0:/data/db
+      - $PWD/$BUILD_ENVIRONMENT/data/mongo-0:/data/db
+      - $PWD/$BUILD_ENVIRONMENT/keyfile/file.key:/auth/file.key
       - $PWD/scripts/create-user.sh:/docker-entrypoint-initdb.d/create-user.sh
-      - $PWD/keyfile/file.key:/auth/file.key
     healthcheck:
       test: test $$(echo "rs.status().ok" | mongo -u $${MONGO_INITDB_ROOT_USERNAME} -p $${MONGO_INITDB_ROOT_PASSWORD} --quiet) -eq 1
       interval: 10s
@@ -39,8 +39,8 @@ services:
     networks:
       - mongors-network
     volumes:
-      - $PWD/data/mongo-1:/data/db
-      - $PWD/keyfile/file.key:/auth/file.key
+      - $PWD/$BUILD_ENVIRONMENT/data/mongo-1:/data/db
+      - $PWD/$BUILD_ENVIRONMENT/keyfile/file.key:/auth/file.key
     command: ["--replSet", "${MONGO_REPLICA_SET_NAME}", "--bind_ip_all",  "--keyFile", "/auth/file.key"]
 
   mongo-2:
@@ -52,8 +52,8 @@ services:
     networks:
       - mongors-network
     volumes:
-        - $PWD/data/mongo-2:/data/db
-        - $PWD/keyfile/file.key:/auth/file.key
+        - $PWD/$BUILD_ENVIRONMENT/data/mongo-2:/data/db
+        - $PWD/$BUILD_ENVIRONMENT/keyfile/file.key:/auth/file.key
     command: ["--replSet", "${MONGO_REPLICA_SET_NAME}", "--bind_ip_all",  "--keyFile", "/auth/file.key"]
 
   mongoclient:
@@ -67,10 +67,10 @@ services:
     env_file:
       - .env
     volumes:
-      - $PWD/scripts/initiate_replica.sh:/deployment_scripts/initiate_replica.sh
-      - $PWD/mongostatus:/data/
+      - $PWD/$BUILD_ENVIRONMENT/mongostatus:/data/
+      - $PWD/scripts/init-replica.sh:/deployment_scripts/init-replica.sh
     entrypoint:
-      - /deployment_scripts/initiate_replica.sh
+      - /deployment_scripts/init-replica.sh
 
 networks:
   mongors-network:
