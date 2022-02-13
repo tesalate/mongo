@@ -4,3 +4,6 @@
 .env*
 *.key
 *.flag
+prod
+dev
+staging
